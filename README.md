@@ -1,4 +1,4 @@
-# Домашнее задание к занятию "`Название занятия`" - `Фамилия и имя студента`
+# Домашнее задание к занятию "`Занятие 8-03 Zabbix`" - `Алексеев Александр`
 
 
 ### Инструкция по выполнению домашнего задания
@@ -22,54 +22,96 @@
 
 ---
 
-### Задание 1
-
+### Задание 1 Установите Zabbix Server с веб-интерфейсом.
+Требования к результаты
+    Прикрепите в файл README.md скриншот авторизации в админке.
+    Приложите в файл README.md текст использованных команд в GitHub.
 `Приведите ответ в свободной форме........`
 
-1. `Заполните здесь этапы выполнения, если требуется ....`
-2. `Заполните здесь этапы выполнения, если требуется ....`
-3. `Заполните здесь этапы выполнения, если требуется ....`
-4. `Заполните здесь этапы выполнения, если требуется ....`
-5. `Заполните здесь этапы выполнения, если требуется ....`
-6. 
-
-```
-Поле для вставки кода...
-....
-....
-....
-....
+#### Установка Zabbix
+```bash
+wget https://repo.zabbix.com/zabbix/7.0/debian/pool/main/z/zabbix-release/zabbix-release_7.0-2+debian12_all.deb
+sudo dpkg -i zabbix-release_7.0-2+debian12_all.deb
+apt update
+sudo apt install zabbix-server-pgsql zabbix-frontend-php php8.2-pgsql zabbix-apache-conf zabbix-sql-scripts zabbix-agent
 ```
 
-`При необходимости прикрепитe сюда скриншоты
-![Название скриншота 1](ссылка на скриншот 1)`
+#### Установка Postgresql
+```bash
+sudo sh -c 'echo "deb https://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" >/etc/apt/sources.list.d/pgdg.list'
+wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
+sudo apt update
+sudo apt install postgresql-16
+```
+
+#### Создание роли/пользователя 'zabbix' в кластере Postgresql. Создание БД с владельцем zabbix.
+```bash
+su - postgres -c 'psql --command "CREATE USER zabbix WITH PASSWORD '\'zabbix\'';"'
+su - postgres -c 'psql --command "CREATE DATABASE zabbix OWNER zabbix;"'
+```
+
+#### На хосте Zabbix сервера импортируем начальную схему и данные.
+```bash
+sudo zcat /usr/share/zabbix-sql-scripts/postgresql/server.sql.gz | sudo -u zabbix psql zabbix
+```
+
+#### Настроем базу данных для Zabbix сервера. Отредактируем файл /etc/zabbix/zabbix_server.conf
+```bash
+sed -i 's/# DBPassword=/DBPassword=zabbix/g' /etc/zabbix/zabbix_server.conf
+```
+
+#### Запустим процессы Zabbix сервера и агента, и настроем их запуск при загрузке ОС.
+```bash
+systemctl restart zabbix-server zabbix-agent apache2
+systemctl enable zabbix-server zabbix-agent apache2
+```
+
+![Admin authentication screen](img/Zabbix-1-Admin-Authentication.png)
+![Admin is logged-in Zabbix browser](img/Zabbix-1-Admin-signed-up.png)
 
 
 ---
 
-### Задание 2
+### Задание 2 Установите Zabbix Agent на два хоста.
 
-`Приведите ответ в свободной форме........`
-
-1. `Заполните здесь этапы выполнения, если требуется ....`
-2. `Заполните здесь этапы выполнения, если требуется ....`
-3. `Заполните здесь этапы выполнения, если требуется ....`
-4. `Заполните здесь этапы выполнения, если требуется ....`
-5. `Заполните здесь этапы выполнения, если требуется ....`
-6. 
-
-```
-Поле для вставки кода...
-....
-....
-....
-....
+#### Выполним установку агента Zabbix на том же хосте, что и сервер (127.0.0.1 - он же - 192.168.0.34) 
+#### и внесем в /etc/zabbix/zabbix_agentd.conf информацию о серверах, с которых сервер будет принимать данные
+```bash
+sudo apt install zabbix-agent -y
+sed -i 's/Server=127.0.0.1/Server=127.0.0.1,192.168.0.34,192.168.0.70'/g' /etc/zabbix/zabbix_agentd.conf
 ```
 
-`При необходимости прикрепитe сюда скриншоты
-![Название скриншота 2](ссылка на скриншот 2)`
+#### Выполним установку агента Zabbix на виртуальной машине 192.168.0.70/24 
+```bash
+wget https://repo.zabbix.com/zabbix/7.0/debian/pool/main/z/zabbix-release/zabbix-release_7.0-2+debian12_all.deb
+sudo dpkg -i zabbix-release_7.0-2+debian12_all.deb
+apt update
+sudo apt install zabbix-agent -y
+```
+
+#### на VMDebian1 в конф. файле агента Zabbix определим доступность адреса сервера 
+![zabbix_agentd.conf on the VMDebian1 host](img/Zabbix-2-VM1-agentd.conf.png)
 
 
+#### запустим агент Zabbix 
+```bash
+sudo systemctl restart zabbix-agent
+sudo systemctl enable zabbix-agent
+```
+
+
+#### Приложите в файл README.md скриншот раздела Configuration > Hosts, где видно, что агенты подключены к серверу
+![hosts](img/Zabbix-2-Hosts.png)
+
+#### Приложите в файл README.md скриншот лога zabbix agent, где видно, что он работает с сервером
+![zabbix_agentd.log on the first host](img/Zabbix-2-agent-log-on-local-machine.png)
+![zabbix_agentd.log on the second host VMDebian1](img/Zabbix-2-agent-log-host2-VMDebian1.png)
+
+#### Приложите в файл README.md скриншот раздела Monitoring > Latest data для обоих хостов, где видны поступающие от агентов данные.
+![latest data of the first host on the server machine](img/Zabbix-2-latest-data-host-on-server.png)
+![latest data of the second host VMDebian1](img/Zabbix-2-latest-data-host-2-VM1.png)
+
+#### Приложите в файл README.md текст использованных команд в GitHub
 ---
 
 ### Задание 3
