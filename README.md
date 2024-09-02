@@ -74,14 +74,14 @@ systemctl enable zabbix-server zabbix-agent apache2
 
 ### Задание 2 Установите Zabbix Agent на два хоста.
 
-#### Выполним установку агента Zabbix на том же хосте, что и сервер (127.0.0.1 - он же - 192.168.0.34) 
+#### 2.1. Выполним установку агента Zabbix на том же хосте, что и сервер (127.0.0.1 - он же - 192.168.0.34) 
 #### и внесем в /etc/zabbix/zabbix_agentd.conf информацию о серверах, с которых сервер будет принимать данные
 ```bash
 sudo apt install zabbix-agent -y
-sed -i 's/Server=127.0.0.1/Server=127.0.0.1,192.168.0.34,192.168.0.70'/g' /etc/zabbix/zabbix_agentd.conf
+sed -i 's/Server=127.0.0.1/Server=127.0.0.1,192.168.0.34'/g' /etc/zabbix/zabbix_agentd.conf
 ```
 
-#### Выполним установку агента Zabbix на виртуальной машине 192.168.0.70/24 
+#### 2.2. Выполним установку агента Zabbix на виртуальной машине 192.168.0.70/24 (VMDebian1)
 ```bash
 wget https://repo.zabbix.com/zabbix/7.0/debian/pool/main/z/zabbix-release/zabbix-release_7.0-2+debian12_all.deb
 sudo dpkg -i zabbix-release_7.0-2+debian12_all.deb
@@ -89,11 +89,11 @@ apt update
 sudo apt install zabbix-agent -y
 ```
 
-#### на VMDebian1 в конф. файле агента Zabbix определим доступность адреса сервера 
+#### на VMDebian1 (192.168.0.70) в конф. файле агента Zabbix определим доступность адреса сервера 
 ![zabbix_agentd.conf on the VMDebian1 host](img/Zabbix-2-VM1-agentd.conf.png)
 
 
-#### запустим агент Zabbix 
+#### запустим агент Zabbix на хостах
 ```bash
 sudo systemctl restart zabbix-agent
 sudo systemctl enable zabbix-agent
