@@ -105,7 +105,7 @@ sudo systemctl enable zabbix-agent
 
 #### Приложите в файл README.md скриншот лога zabbix agent, где видно, что он работает с сервером
 ![zabbix_agentd.log on the first host](img/Zabbix-2-agent-log-on-local-machine.png)
-![zabbix_agentd.log on the second host VMDebian1](img/Zabbix-2-agent-log-host2-VMDebian1.png)
+![zabbix_agentd.log on the second host VMDebian1](img/Zabbix-2-agentd-log-host2-VNDebian1.png)
 
 #### Приложите в файл README.md скриншот раздела Monitoring > Latest data для обоих хостов, где видны поступающие от агентов данные.
 ![latest data of the first host on the server machine](img/Zabbix-2-latest-data-host-on-server.png)
