@@ -31,6 +31,10 @@
 Требования к результату
 Прикрепите в файл README.md скриншот страницы шаблона с названием «Задание 1»
 
+![My Linux by Zabbix agent Template with system.cpu.util и vm.memory.size[pavailable]](img/HW-8-03_2_Zabbix_scr_My_Linux_by_Zabbix_agent_Template.png)
+![My Linux by Zabbix agent Template with vm.memory.size[pavailable]](img/HW-8-03-Z-2-my-template-mem.png)
+![My Linux by Zabbix agent Template with system.cpu.util](img/HW-8-03-Z-2-my-template-cpu.png)
+
 ---
 
 ### Задание 2 Добавьте в Zabbix два хоста и задайте им имена <фамилия и инициалы-1> и <фамилия и инициалы-2>. Например: ivanovii-1 и ivanovii-2.
@@ -42,6 +46,8 @@
 Добавьте Zabbix Agentов в раздел Configuration > Hosts вашего Zabbix Servera
 Прикрепите за каждым хостом шаблон Linux by Zabbix Agent
 Проверьте что в разделе Latest Data начали появляться данные с добавленных агентов
+
+![2 new hosts](img/HW-8-03_2-Z-2-new-hosts.png)
 
 ---
 
@@ -55,6 +61,8 @@
 Требования к результату
 Прикрепите в файл README.md скриншот страницы хостов, где будут видны привязки шаблонов с названиями «Задание 2-3». Хосты должны иметь зелёный статус подключения
 
+![Latest data of "My Linux by Zabbix agent" Template onto 2 new hosts](img/HW-8-03_2-Z-Latest-data-from-2-new-hosts.png)
+
 ---
 
 ### Задание 4 Создайте свой кастомный дашборд.
@@ -65,6 +73,8 @@
 Разместите на нём несколько графиков на ваше усмотрение.
 Требования к результату
 Прикрепите в файл README.md скриншот дашборда с названием «Задание 4»
+
+![My New Dashboard with data from 2 new hosts](img/HW-8-03_2-Z-My_New-Dashboard.png)
 
 ---
 
